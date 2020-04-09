@@ -1,11 +1,13 @@
 {
   "name": "rvn-tool",
-  "version": "0.1.0",
+  "homepage": "https://api.hphucs.me/rd2ex",
+  "version": "1.0.6",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
+    "jquery": "^3.4.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.1"
