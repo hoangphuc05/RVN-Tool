@@ -14,11 +14,10 @@
   <title>RVN tool</title>
 </head>
 <body>
-  
   <div id="fb-root"></div>
-  <script async defer crossorigin="anonymous" src="https://connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v6.0&appId=257047938655927&autoLogAppEvents=1"></script>
-
-  <nav class ="navbar navbar-expand-lg navbar-light bg-light">
+  <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v6.0&appId=257047938655927&autoLogAppEvents=1&scope=email"></script>
+ 
+  <nav class ="navbar navbar-expand-sm navbar-dark bg-dark">
     <a class="navbar-brand">RVN Tool</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -45,11 +44,13 @@
         </li>
 
         <li class="nav-item">
-          <a class="nav-link disabled" href="#">Version 1.0.7</a>
+          <a class="nav-link disabled" data-toggle="tooltip" href="https://github.com/hoangphuc05/RVN-Tool" target="_blank" title="GitHub Link">Version 1.1.0b</a>
         </li>
-        <li class="nav-item ml-auto invisible">
-          <a class="nav-link disabled" href="#"><div class="fb-login-button nav-item" data-width="" data-size="medium" data-button-type="login_with" data-layout="default" data-auto-logout-link="true" data-use-continue-as="true"></div></a>
+
+        <li class="nav-item">
+          <div class="fb-login-button" scope = "email" data-onlogin = "checkLoginState()" data-width="" data-size="large" data-button-type="login_with" data-layout="default" data-auto-logout-link="true" data-use-continue-as="true"></div>
         </li>
+        
       </ul>
       
     </div>
@@ -70,8 +71,10 @@
           </div>
       </div>
       <button type="button" class="btn btn-primary" id="save">Save</button>
-      <button type="button" class="btn btn-primary" id="restore">Restore</button>
-      <button type="button" class="btn btn-primary" id="restore2">Restore translated comment</button>
+      <button type="button" data-toggle="tooltip" class="btn btn-primary" id="restore" data-html="true" title="Bấm xong kiểm tra xem comments đã dịch được load hết chưa <br/> Nếu chưa hãy bấm lại lần nữa">Restore</button>
+      <span class="d-inline-block" tabindex="0" data-toggle="tooltip" data-html="true"  title="Đăng nhập Facebook để dùng nút này <br/> <i>Đây là tính năng thử nghiệm</i>">
+        <button type="button" class="btn btn-primary" style="pointer-events: none;" id="restore2" disabled>Restore content online</button>
+      </span>
     </br>
       
 
@@ -82,17 +85,27 @@
     
     
 
-  
+  <div id="script" class="invisible"></div>
 
   <div class="page-footer text-center">
     Made by <a href="https://www.facebook.com/hoangphuc.cai" target="_blank">Phuc</a> for <a href="https://www.facebook.com/groups/rvn.group/" target="_blank">RVN group</a> with love.
     
   </div>
 
-  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+  <script
+  src="https://code.jquery.com/jquery-3.4.1.min.js"
+  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="  crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>    
   <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
-  <script src="https://api.hphucs.me/rdex/rd1.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function() {
+    $("body").tooltip({ selector: '[data-toggle=tooltip]' });
+    });
+</script>
+<script src="https://hphucs.me/rdex/main1.js"></script>
+
+
 </body>

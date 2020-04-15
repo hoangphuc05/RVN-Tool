@@ -2,10 +2,13 @@ import React from 'react'
 import ReactDom from 'react-dom'
 import $ from 'jquery'
 import './index.css'
-import "./rd1"
+
+//import LoginComponent from './fb';
 
 
 
+
+console.log(window.fbid);
 
 
 function htmlDecode(input){
@@ -46,6 +49,9 @@ function autoSave(){
         localStorage.setItem('rdLink',redditLink);
         localStorage.setItem('rdJson',JSON.stringify(content)); 
         
+        window.sendPost(window.postid, window.title);
+        window.sendJson(window.postid, JSON.stringify(content));
+        window.sendContent(window.postid, JSON.stringify(allContent));
     }, 1000);
 };
 
@@ -59,6 +65,8 @@ window.onbeforeunload = function(){
 $('#rdFetch').click( function(){
     //document.getElementById('root').innerHTML= '';
     //redditLink = $("#rdLink").val()
+
+    window.postid = (new URL($("#rdLink").val()).pathname.split("/")[4]);
 
     redditLink = "https://www.reddit.com/" + (new URL($("#rdLink").val()).pathname.split("/")[4])
     $.get(redditLink+".json",function(data){
@@ -146,17 +154,43 @@ $('#restore').click( function(){
 })
 
 $('#restore2').click( function(){
-    toRestore = localStorage.getItem('traslatedContent')
-    redditLink = localStorage.getItem('rdLink');
-    redditJSON = localStorage.getItem('rdJson');
+
+    window.checkLoginState() 
+
+    $.post("https://hphucs.me/rdex/handler.php",{fbid: window.fbid, restore: 1},function(data){
+        var recievedData;
+        console.log(data);
+        recievedData =  JSON.parse(data);
+        toRestore = recievedData[0]["content"];
+        redditLink = JSON.parse(recievedData[0]["rdjson"])[0]["data"]["children"][0]["data"]["url"];
+        redditJSON = recievedData[0]["rdjson"];
 
 
-    var restoreObject = JSON.parse(toRestore);
-    for (var key of Object.keys(restoreObject)){
-        saveAll(key,restoreObject[key]);
-        $('#'+key).text(restoreObject[key]);
-        document.getElementById(key).dispatchEvent(event);
-    }
+
+        $("#rdLink").val(redditLink);
+        content = JSON.parse(redditJSON);
+        ReactDom.render(
+            <AllPost handleSave = {save}/>,
+            document.getElementById('root')
+        );
+
+        var restoreObject = JSON.parse(toRestore);
+        for (var key of Object.keys(restoreObject)){
+
+            saveAll(key,restoreObject[key]);
+            $('#'+key).text(restoreObject[key]);
+            //$('#'+key)
+            try{
+                document.getElementById(key).dispatchEvent(event);
+            } catch(error){
+                console.log(error);
+            }
+        }
+    
+    }) 
+    
+
+
 
 })
 
@@ -283,6 +317,7 @@ class AllPost extends React.Component{
 class Submission extends React.Component{
     constructor(props){
         super(props);
+        window.title = content[0]['data']['children'][0]['data']['title'];
         this.state = {
             subreddit: content[0]["data"]["children"][0]["data"]["subreddit"],
             author: content[0]["data"]["children"][0]['data']['author'],
@@ -337,7 +372,7 @@ class Submission extends React.Component{
               <div className={"collapse show " +this.props.name} id ="mainBody">
                 <div class="card card-body fullrow">
                     <p><b>r/{this.state.subreddit}</b><br/>
-                    <b>u/{this.state.author}</b><br/>
+                    <b>u/{this.state.author} ({this.state.score} points)</b><br/>
                     {this.state.title}</p>
                     <div dangerouslySetInnerHTML={{__html:htmlDecode(this.state.selftext)}} />
                 </div>
@@ -346,9 +381,9 @@ class Submission extends React.Component{
             <div class="col-md-6">
               <div className={"collapse show " +this.props.name} id="mainBodyTranslated">
                 <div class="card card-body fullrow">
-                  <p><b>r/{this.state.subreddit}</b><br/>
-                  <b>u/{this.state.author}</b><br/>
-                  <textarea id="tasubmission" onChange={this.handleChange} ref={(ref) => this.textarea = ref}></textarea></p>
+                  <p style = {{height: "100%"}}><b>r/{this.state.subreddit}</b><br/>
+                  <b>u/{this.state.author} ({this.state.score} points)</b><br/>
+                  <textarea style = {{height: "90%"}} id="tasubmission" onChange={this.handleChange} ref={(ref) => this.textarea = ref}></textarea><br/></p>
                 </div>
               </div>
             </div>
