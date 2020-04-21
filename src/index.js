@@ -48,10 +48,11 @@ function autoSave(){
         localStorage.setItem('traslatedContent', JSON.stringify(allContent));
         localStorage.setItem('rdLink',redditLink);
         localStorage.setItem('rdJson',JSON.stringify(content)); 
-        
-        window.sendPost(window.postid, window.title);
-        window.sendJson(window.postid, JSON.stringify(content));
-        window.sendContent(window.postid, JSON.stringify(allContent));
+        if(window.logined == 1){
+            window.sendPost(window.postid, window.title);
+            window.sendJson(window.postid, JSON.stringify(content));
+            window.sendContent(window.postid, JSON.stringify(allContent));
+        }
     }, 1000);
 };
 
@@ -165,7 +166,7 @@ $('#restore2').click( function(){
         redditLink = JSON.parse(recievedData[0]["rdjson"])[0]["data"]["children"][0]["data"]["url"];
         redditJSON = recievedData[0]["rdjson"];
 
-
+        window.postid = recievedData[0]["postid"];
 
         $("#rdLink").val(redditLink);
         content = JSON.parse(redditJSON);
@@ -210,9 +211,9 @@ class AllPost extends React.Component{
     }
 
     updateSubmission = (translatedContent) =>{
-        //this.setState({translatedSubmission: translatedContent});
-        this.state.translatedSubmission = translatedContent;
-        this.updateAll();
+        this.setState({translatedSubmission: translatedContent},() => this.updateAll());
+        //this.state.translatedSubmission = translatedContent;
+        //this.updateAll();
     }
 
     updateComment = (translatedComment,order) =>{
@@ -259,25 +260,48 @@ class AllPost extends React.Component{
         var elements=[];
        
         elements.push(<Submission changeContent = {this.updateSubmission}/>);
-        for (var i=0; i < content[1]['data']['children'].length - 1;i++){
+        
 
-            var tempChildren = content[1]['data']['children'][i]['data']['replies']== "" ? null : content[1]['data']['children'][i]['data']['replies']['data']['children']
+        if (content[1]['data']['children'][content[1]['data']['children'].length - 1]['kind'] == "t1"){
+            for (var i=0; i < content[1]['data']['children'].length;i++){
 
-            this.state.translatedComments = this.state.translatedComments.concat([""]);
-            //this.setState({translatedComments: this.state.translatedComments.concat([""])});
+                var tempChildren = content[1]['data']['children'][i]['data']['replies']== "" ? null : content[1]['data']['children'][i]['data']['replies']['data']['children']
+    
+                this.state.translatedComments = this.state.translatedComments.concat([""]);
+                //this.setState({translatedComments: this.state.translatedComments.concat([""])});
+    
+                elements.push(<Comments body_html={ content[1]['data']['children'][i]['data']['body_html']}
+                            author = {content[1]['data']['children'][i]['data']['author']}
+                            score = {pointFormatter(content[1]['data']['children'][i]['data']['score'])}
+                            id = {content[1]['data']['children'][i]['data']['id']}
+                            level = {1}
+                            children = {tempChildren}
+                            allChildren = {Array(0)}
+                            order = {i}
+                            changeContent = {this.updateComment}
+    
+                        />)
+            }
+        } else {
+            for (var i=0; i < content[1]['data']['children'].length - 1;i++){
 
-            elements.push(<Comments body_html={ content[1]['data']['children'][i]['data']['body_html']}
-                        author = {content[1]['data']['children'][i]['data']['author']}
-                        score = {pointFormatter(content[1]['data']['children'][i]['data']['score'])}
-                        id = {content[1]['data']['children'][i]['data']['id']}
-                        level = {1}
-                        children = {tempChildren}
-                        allChildren = {Array(0)}
-                        order = {i}
-                        changeContent = {this.updateComment}
-
-
-                    />)
+                var tempChildren = content[1]['data']['children'][i]['data']['replies']== "" ? null : content[1]['data']['children'][i]['data']['replies']['data']['children']
+    
+                this.state.translatedComments = this.state.translatedComments.concat([""]);
+                //this.setState({translatedComments: this.state.translatedComments.concat([""])});
+    
+                elements.push(<Comments body_html={ content[1]['data']['children'][i]['data']['body_html']}
+                            author = {content[1]['data']['children'][i]['data']['author']}
+                            score = {pointFormatter(content[1]['data']['children'][i]['data']['score'])}
+                            id = {content[1]['data']['children'][i]['data']['id']}
+                            level = {1}
+                            children = {tempChildren}
+                            allChildren = {Array(0)}
+                            order = {i}
+                            changeContent = {this.updateComment}
+    
+                        />)
+            }
         }
 
         return( <div>
