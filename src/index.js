@@ -204,9 +204,6 @@ class AllPost extends React.Component{
             translatedSubmission: null,
             translatedComments : Array(),
             traslatedAll : null,
-
-            
-
         }
     }
 
@@ -217,7 +214,6 @@ class AllPost extends React.Component{
     }
 
     updateComment = (translatedComment,order) =>{
-
         this.state.translatedComments[order]= translatedComment;
         this.updateAll();
     }
@@ -227,7 +223,7 @@ class AllPost extends React.Component{
         var allComments = "";
         for (var i =0; i< this.state.translatedComments.length; i++){
             if(this.state.translatedComments[i] != ""){
-                allComments += this.state.translatedComments[i]  + "__________________________"+"\r\n";
+                allComments += this.state.translatedComments[i]  + "____________________"+"\r\n";
             }
         }
         this.setState({traslatedAll:translatedSubmission + allComments})
@@ -279,6 +275,7 @@ class AllPost extends React.Component{
                             allChildren = {Array(0)}
                             order = {i}
                             changeContent = {this.updateComment}
+                            awards = {content[1]['data']['children'][i]['data']["all_awardings"]}
     
                         />)
             }
@@ -299,6 +296,7 @@ class AllPost extends React.Component{
                             allChildren = {Array(0)}
                             order = {i}
                             changeContent = {this.updateComment}
+                            awards = {content[1]['data']['children'][i]['data']["all_awardings"]}
     
                         />)
             }
@@ -349,8 +347,44 @@ class Submission extends React.Component{
             title:content[0]['data']['children'][0]['data']['title'],
             score:pointFormatter(content[0]['data']['children'][0]['data']['score']),
             translatedContent:"",
+            awardString: ""
 
         }
+
+        var allAwards = content[0]["data"]['children'][0]['data']['all_awardings']
+        console.log(allAwards);
+        var ignoredCount = 0
+        //list all the award
+        for (var i = 0; i <allAwards.length;i++){
+            if (allAwards[i]["id"] === "gid_2"){
+                this.state.awardString += " - x" + allAwards[i]["count"] + " gold";
+                if (allAwards[i]["count"] > 1){
+                    this.state.awardString += "s";
+                }
+            }
+
+            else if (allAwards[i]["id"] === "gid_3"){
+                this.state.awardString += " - x" + allAwards[i]["count"] + " platinum";
+                if (allAwards[i]["count"] > 1){
+                    this.state.awardString += "s";
+                }
+            }
+
+            else if (allAwards[i]["id"] === "gid_1"){
+                this.state.awardString += " - x" + allAwards[i]["count"] + " silver";
+                if (allAwards[i]["count"] > 1){
+                    this.state.awardString += "s";
+                }
+            }
+            else{
+                ignoredCount += 1;
+            }
+        }
+        
+        if (ignoredCount > 0){
+            this.state.awardString += " & " + ignoredCount + " more"
+        }
+
         /*$('#rdFetch').on("click", ()=>{
             
             $.get($("#rdLink").val()+".json",function(data){
@@ -370,11 +404,11 @@ class Submission extends React.Component{
 
         saveAll("tasubmission", this.textarea.value);
         var toReturn = "r/" + this.state.subreddit + "\r\n" 
-                        + "u/" + this.state.author + "(" + pointFormatter(this.state.score) + " points) \r\n" 
+                        + "u/" + this.state.author + "(" + pointFormatter(this.state.score) + " points" + this.state.awardString + ") \r\n" 
                         + this.textarea.value + "\r\n"
-                        +"__________________________"+"\r\n"
+                        +"____________________"+"\r\n"
                         +"Link Reddit: https://redd.it/" + (new URL($("#rdLink").val()).pathname.split("/")[4])+"\r\n"+
-                        "__________________________"+"\r\n";
+                        "____________________"+"\r\n";
         this.props.changeContent(toReturn);
         //console.log("change handled");
     }
@@ -396,7 +430,7 @@ class Submission extends React.Component{
               <div className={"collapse show " +this.props.name} id ="mainBody">
                 <div class="card card-body fullrow">
                     <p><b>r/{this.state.subreddit}</b><br/>
-                    <b>u/{this.state.author} ({this.state.score} points)</b><br/>
+                    <b>u/{this.state.author} ({this.state.score} points{this.state.awardString})</b><br/>
                     {this.state.title}</p>
                     <div dangerouslySetInnerHTML={{__html:htmlDecode(this.state.selftext)}} />
                 </div>
@@ -406,7 +440,7 @@ class Submission extends React.Component{
               <div className={"collapse show " +this.props.name} id="mainBodyTranslated">
                 <div class="card card-body fullrow">
                   <p style = {{height: "100%"}}><b>r/{this.state.subreddit}</b><br/>
-                  <b>u/{this.state.author} ({this.state.score} points)</b><br/>
+                  <b>u/{this.state.author} ({this.state.score} points{this.state.awardString})</b><br/>
                   <textarea style = {{height: "90%"}} id="tasubmission" onChange={this.handleChange} ref={(ref) => this.textarea = ref}></textarea><br/></p>
                 </div>
               </div>
@@ -428,12 +462,46 @@ class Comments extends React.Component{
             loaded : 0,
             prefix : "",
             translatedComments: Array(),
+            awardString:""
         };
+
+        var allAwards = this.props.awards;
+        var ignoredCount = 0
+        //list all the award
+        for (var i = 0; i <allAwards.length;i++){
+            if (allAwards[i]["id"] === "gid_2"){
+                this.state.awardString += " - x" + allAwards[i]["count"] + " gold";
+                if (allAwards[i]["count"] > 1){
+                    this.state.awardString += "s";
+                }
+            }
+
+            else if (allAwards[i]["id"] === "gid_3"){
+                this.state.awardString += " - x" + allAwards[i]["count"] + " platinum";
+                if (allAwards[i]["count"] > 1){
+                    this.state.awardString += "s";
+                }
+            }
+
+            else if (allAwards[i]["id"] === "gid_1"){
+                this.state.awardString += " - x" + allAwards[i]["count"] + " silver";
+                if (allAwards[i]["count"] > 1){
+                    this.state.awardString += "s";
+                }
+            }
+            else{
+                ignoredCount += 1;
+            }
+        }
+        
+        if (ignoredCount > 0){
+            this.state.awardString += " & " + ignoredCount + " more"
+        }
         
     }
 
     handleChange = () => {
-
+        
         
         saveAll("ta"+this.props.id,this.textarea.value);
         var allChildContent = "";
@@ -445,19 +513,27 @@ class Comments extends React.Component{
             }
         }
 
-        var toReturn = this.state.prefix + "u/" + this.props.author + "(" + pointFormatter(this.props.score) + " points) \r\n"
-            + this.textarea.value +"\r\n\r\n"
+        var toReturn = "\r\n" + this.state.prefix + "u/" + this.props.author + "(" + pointFormatter(this.props.score) + " points"+ this.state.awardString +") \r\n"
+            + this.textarea.value +"\r\n"
             + allChildContent ;
 
         if (this.state.translatedComments===""){
             toReturn = "";
         }
         this.props.changeContent(toReturn,this.props.order);
+
+        
     }
 
     updateComment = (translatedComment,order) =>{
+        //This is for a perfomact test
+        var t0 = performance.now()
+
         this.state.translatedComments[order]= translatedComment;
         this.handleChange();
+
+        var t1 = performance.now()
+        console.log("Call to Handlechange took " + (t1 - t0) + " milliseconds.")
     }
 
 
@@ -472,6 +548,9 @@ class Comments extends React.Component{
             $.ajax({url : redditLink+ this.props.id + ".json", async:false, success:function(data){
                 currentComment = data;
             }});
+
+            
+
                 if (currentComment[1]['data']['children'][0]["data"]["replies"] != ""){
                     var tempChildren = currentComment[1]['data']['children'][0]["data"]["replies"]['data']['children'];
                     for (var m =0; m < tempChildren.length; m++){
@@ -479,7 +558,7 @@ class Comments extends React.Component{
                         
                         this.state.translatedComments = this.state.translatedComments.concat([""]);
                         
-
+                        console.log(tempChildren[m]['data']["all_awardings"]);
   
                         allChildren.push(<Comments body_html={ tempChildren[m]['data']['body_html']}
                             author = {tempChildren[m]['data']['author']}
@@ -489,6 +568,7 @@ class Comments extends React.Component{
                             children = {tempChildren[m]['data']['replies']}
                             order={m}
                             changeContent = {this.updateComment}
+                            awards = {tempChildren[m]['data']["all_awardings"]}
 
                         />)
                         }
@@ -527,7 +607,7 @@ class Comments extends React.Component{
                         
                         <div className={"collapse "+this.props.id}>
                             <div class=" card card-body fullrow">
-                                <p><b>{prefix}u/{this.props.author}({pointFormatter(this.props.score)} points)</b><br/></p>
+                                <p><b>{prefix}u/{this.props.author}({pointFormatter(this.props.score)} points{this.state.awardString})</b><br/></p>
                                 <div dangerouslySetInnerHTML={{__html:htmlDecode(this.props.body_html)}}/>
                             </div>
                         </div>
@@ -535,7 +615,7 @@ class Comments extends React.Component{
                         <div class="col-md-6">
                         <div className={"collapse "+this.props.id} id={this.props.id+"Translated"}>
                             <div class="card card-body fullrow">
-                                <p style = {{height: "100%"}}><b>{prefix}u/{this.props.author}({pointFormatter(this.props.score)} points)</b><br/>
+                                <p style = {{height: "100%"}}><b>{prefix}u/{this.props.author}({pointFormatter(this.props.score)} points{this.state.awardString})</b><br/>
                             <textarea id={"ta"+this.props.id} onChange={this.handleChange} ref={(ref) => this.textarea =ref}></textarea></p>
                             </div>
                         </div>
