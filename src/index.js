@@ -351,6 +351,8 @@ class Submission extends React.Component{
 
         }
 
+        //for award processing---------------------------------------------------------
+        var aWardCount = 0; //count the number of current award, limit it to 3
         var allAwards = content[0]["data"]['children'][0]['data']['all_awardings']
         console.log(allAwards);
         var ignoredCount = 0
@@ -361,6 +363,7 @@ class Submission extends React.Component{
                 if (allAwards[i]["count"] > 1){
                     this.state.awardString += "s";
                 }
+                aWardCount++;
             }
 
             else if (allAwards[i]["id"] === "gid_3"){
@@ -368,6 +371,7 @@ class Submission extends React.Component{
                 if (allAwards[i]["count"] > 1){
                     this.state.awardString += "s";
                 }
+                aWardCount++;
             }
 
             else if (allAwards[i]["id"] === "gid_1"){
@@ -375,6 +379,12 @@ class Submission extends React.Component{
                 if (allAwards[i]["count"] > 1){
                     this.state.awardString += "s";
                 }
+                aWardCount++;
+            }
+
+            else if (aWardCount < 3){
+                this.state.awardString += " - x" + allAwards[i]["count"] + " " + allAwards[i]["name"];
+                aWardCount++;
             }
             else{
                 ignoredCount += 1;
@@ -465,6 +475,8 @@ class Comments extends React.Component{
             awardString:""
         };
 
+        //process award--------------------------------------------------
+        var aWardCount = 0;
         var allAwards = this.props.awards;
         var ignoredCount = 0
         //list all the award
@@ -474,6 +486,7 @@ class Comments extends React.Component{
                 if (allAwards[i]["count"] > 1){
                     this.state.awardString += "s";
                 }
+                aWardCount++;
             }
 
             else if (allAwards[i]["id"] === "gid_3"){
@@ -481,6 +494,7 @@ class Comments extends React.Component{
                 if (allAwards[i]["count"] > 1){
                     this.state.awardString += "s";
                 }
+                aWardCount++;
             }
 
             else if (allAwards[i]["id"] === "gid_1"){
@@ -488,6 +502,12 @@ class Comments extends React.Component{
                 if (allAwards[i]["count"] > 1){
                     this.state.awardString += "s";
                 }
+                aWardCount++;
+            }
+
+            else if (aWardCount < 3){
+                this.state.awardString += " - x" + allAwards[i]["count"] + " " + allAwards[i]["name"];
+                aWardCount++;
             }
             else{
                 ignoredCount += 1;
@@ -601,29 +621,35 @@ class Comments extends React.Component{
                 >
                     <b>{prefix}u/{this.props.author}({pointFormatter(this.props.score)} points)</b>
                 </a>
-                <div className = {"collapse " + this.props.id} id = {this.props.id}>
-                    <div className={"row"}>
-                        <div class="col-md-6">
+
+
+                    <div className = {"collapse outerComments " + this.props.id} id = {this.props.id}>
+                        <div className={"row"}>
                         
-                        <div className={"collapse "+this.props.id}>
-                            <div class=" card card-body fullrow">
-                                <p><b>{prefix}u/{this.props.author}({pointFormatter(this.props.score)} points{this.state.awardString})</b><br/></p>
-                                <div dangerouslySetInnerHTML={{__html:htmlDecode(this.props.body_html)}}/>
+                            <div class="col-md-6">
+                                <div class="row">
+
+                                    <div className={"collapse col-md-11 "+this.props.id}>
+                                        <div class=" card card-body fullrow">
+                                            <p><b>{prefix}u/{this.props.author}({pointFormatter(this.props.score)} points{this.state.awardString})</b><br/></p>
+                                            <div dangerouslySetInnerHTML={{__html:htmlDecode(this.props.body_html)}}/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                            <div className={"collapse "+this.props.id} id={this.props.id+"Translated"}>
+                                <div class="card card-body fullrow">
+                                    <p style = {{height: "100%"}}><b>{prefix}u/{this.props.author}({pointFormatter(this.props.score)} points{this.state.awardString})</b><br/>
+                                <textarea id={"ta"+this.props.id} onChange={this.handleChange} ref={(ref) => this.textarea =ref}></textarea></p>
+                                </div>
+                            </div>
                             </div>
                         </div>
-                        </div>
-                        <div class="col-md-6">
-                        <div className={"collapse "+this.props.id} id={this.props.id+"Translated"}>
-                            <div class="card card-body fullrow">
-                                <p style = {{height: "100%"}}><b>{prefix}u/{this.props.author}({pointFormatter(this.props.score)} points{this.state.awardString})</b><br/>
-                            <textarea id={"ta"+this.props.id} onChange={this.handleChange} ref={(ref) => this.textarea =ref}></textarea></p>
-                            </div>
-                        </div>
-                        </div>
+                    
+                        {this.state.allChildren}
                     </div>
-                
-                    {this.state.allChildren}
-                </div>
+
           </div>
         )
     }
@@ -631,3 +657,19 @@ class Comments extends React.Component{
 
 
 //======
+/*
+
+$('.outerComments').click(function(e){
+    if(  e.offsetX <= parseInt($(this).css('borderLeftWidth'))){
+       
+    }
+});
+
+$('.outerComments').hover(function(e){
+    if(  e.offsetX <= parseInt($(this).css('borderLeftWidth'))){
+       $(this).css("border-left-color", "#999");
+    }
+    else{
+        $(this).css("border-left-color", "#f2f2f2");
+    }
+});*/
