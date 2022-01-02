@@ -575,23 +575,23 @@ class Comments extends React.Component{
                     var tempChildren = currentComment[1]['data']['children'][0]["data"]["replies"]['data']['children'];
                     for (var m =0; m < tempChildren.length; m++){
 
-                        
                         this.state.translatedComments = this.state.translatedComments.concat([""]);
                         
-                        console.log(tempChildren[m]['data']["all_awardings"]);
-  
-                        allChildren.push(<Comments body_html={ tempChildren[m]['data']['body_html']}
-                            author = {tempChildren[m]['data']['author']}
-                            score = {pointFormatter(tempChildren[m]['data']['score'])}
-                            id = {tempChildren[m]['data']['id']}
-                            level = {currentLevel + 1}
-                            children = {tempChildren[m]['data']['replies']}
-                            order={m}
-                            changeContent = {this.updateComment}
-                            awards = {tempChildren[m]['data']["all_awardings"]}
-
-                        />)
+                        let kind = tempChildren[m]['kind'];
+                        if (kind == "t1") {
+                            console.log(tempChildren[m]['data']["all_awardings"]);
+                            allChildren.push(<Comments body_html={tempChildren[m]['data']['body_html']}
+                                author={tempChildren[m]['data']['author']}
+                                score={pointFormatter(tempChildren[m]['data']['score'])}
+                                id={tempChildren[m]['data']['id']}
+                                level={currentLevel + 1}
+                                children={tempChildren[m]['data']['replies']}
+                                order={m}
+                                changeContent={this.updateComment}
+                                awards={tempChildren[m]['data']["all_awardings"]}
+                            />)
                         }
+                    }
                         
                 }   
             
