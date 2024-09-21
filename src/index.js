@@ -67,9 +67,9 @@ $('#rdFetch').click( function(){
     //document.getElementById('root').innerHTML= '';
     //redditLink = $("#rdLink").val()
 
-    window.postid = (new URL($("#rdLink").val()).pathname.split("/")[4]);
+    window.postid = $("#rdLink").val();
 
-    redditLink = "https://www.reddit.com/" + (new URL($("#rdLink").val()).pathname.split("/")[4])
+    redditLink = $("#rdLink").val()
     $.get(redditLink+".json",function(data){
         //redditJSON = data;
         content = data;
