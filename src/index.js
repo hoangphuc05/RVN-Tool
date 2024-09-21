@@ -226,6 +226,7 @@ class AllPost extends React.Component{
                 allComments += this.state.translatedComments[i]  + "____________________"+"\r\n";
             }
         }
+        allComments += "Translated by " + "\r\n" +"Edited by https: //hphucs .me/reddit2/"
         this.setState({traslatedAll:translatedSubmission + allComments})
     }
 
@@ -418,9 +419,7 @@ class Submission extends React.Component{
                         + this.textarea.value + "\r\n"
                         +"____________________"+"\r\n"
                         +"Link Reddit: https://redd.it/" + (new URL($("#rdLink").val()).pathname.split("/")[4])+"\r\n"
-                        +"____________________"+"\r\n"
-                        +"Translated by " + "\r\n"
-                        +"Edited by https: //hphucs .me/reddit2/";
+                        +"____________________"+"\r\n";
         this.props.changeContent(toReturn);
         //console.log("change handled");
     }
