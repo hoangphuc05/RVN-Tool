@@ -67,9 +67,9 @@ $('#rdFetch').click( function(){
     //document.getElementById('root').innerHTML= '';
     //redditLink = $("#rdLink").val()
 
-    window.postid = (new URL($("#rdLink").val()).pathname.split("/")[4]);
+    window.postid = $("#rdLink").val();
 
-    redditLink = "https://www.reddit.com/" + (new URL($("#rdLink").val()).pathname.split("/")[4])
+    redditLink = $("#rdLink").val()
     $.get(redditLink+".json",function(data){
         //redditJSON = data;
         content = data;
@@ -417,8 +417,10 @@ class Submission extends React.Component{
                         + "u/" + this.state.author + "(" + pointFormatter(this.state.score) + " points" + this.state.awardString + ") \r\n" 
                         + this.textarea.value + "\r\n"
                         +"____________________"+"\r\n"
-                        +"Link Reddit: https://redd.it/" + (new URL($("#rdLink").val()).pathname.split("/")[4])+"\r\n"+
-                        "____________________"+"\r\n";
+                        +"Link Reddit: https://redd.it/" + (new URL($("#rdLink").val()).pathname.split("/")[4])+"\r\n"
+                        +"____________________"+"\r\n"
+                        +"Translated by " + "\r\n"
+                        +"Edited by https: //hphucs .me/reddit2/";
         this.props.changeContent(toReturn);
         //console.log("change handled");
     }
